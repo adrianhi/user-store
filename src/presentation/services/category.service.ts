@@ -11,17 +11,17 @@ export class CategoryService {
   constructor() { }
 
 
-  async createCategory( createCategoryDto: CreateCategoryDto, user: UserEntity ) {
+  async createCategory(createCategoryDto: CreateCategoryDto, user: UserEntity) {
 
-    const categoryExists = await CategoryModel.findOne( { name: createCategoryDto.name } );
-    if ( categoryExists ) throw CustomError.badRequest( 'Category already exists' );
+    const categoryExists = await CategoryModel.findOne({ name: createCategoryDto.name });
+    if (categoryExists) throw CustomError.badRequest('Category already exists');
 
     try {
 
-      const category = new CategoryModel( {
+      const category = new CategoryModel({
         ...createCategoryDto,
         user: user.id,
-      } );
+      });
 
       await category.save();
 
@@ -32,15 +32,15 @@ export class CategoryService {
         available: category.available,
       };
 
-    } catch ( error ) {
-      throw CustomError.internalServer( `${ error }` );
+    } catch (error) {
+      throw CustomError.internalServer(`${error}`);
     }
 
   }
 
 
 
-  async getCategories( paginationDto: PaginationDto ) {
+  async getCategories(paginationDto: PaginationDto) {
 
     const { page, limit } = paginationDto;
 
@@ -51,31 +51,31 @@ export class CategoryService {
       // const categories = await CategoryModel.find()
       //   .skip( (page - 1) * limit )
       //   .limit( limit )
-      const [ total, categories ] = await Promise.all( [
+      const [total, categories] = await Promise.all([
         CategoryModel.countDocuments(),
         CategoryModel.find()
-          .skip( ( page - 1 ) * limit )
-          .limit( limit )
-      ] );
+          .skip((page - 1) * limit)
+          .limit(limit)
+      ]);
 
 
       return {
         page: page,
         limit: limit,
         total: total,
-        next: `/api/categories?page=${ ( page + 1 ) }&limit=${ limit }`,
-        prev: (page - 1 > 0) ? `/api/categories?page=${ ( page - 1 ) }&limit=${ limit }`: null,
+        next: `/api/categories?page=${(page + 1)}&limit=${limit}`,
+        prev: (page - 1 > 0) ? `/api/categories?page=${(page - 1)}&limit=${limit}` : null,
 
-        categories: categories.map( category => ( {
+        categories: categories.map(category => ({
           id: category.id,
           name: category.name,
           available: category.available,
-        } ) )
+        }))
       };
 
 
-    } catch ( error ) {
-      throw CustomError.internalServer( 'Internal Server Error' );
+    } catch (error) {
+      throw CustomError.internalServer('Internal Server Error');
     }
 
 

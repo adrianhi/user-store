@@ -10,11 +10,11 @@ interface Options {
 
 export class MongoDatabase {
 
-  static async connect( options: Options ) {
+  static async connect(options: Options) {
     const { mongoUrl, dbName } = options;
 
     try {
-      await mongoose.connect( mongoUrl, {
+      await mongoose.connect(mongoUrl, {
         dbName: dbName,
       });
 
@@ -27,6 +27,9 @@ export class MongoDatabase {
 
   }
 
+  static async disconnect() {
+    await mongoose.disconnect();
+  }
 
 }
 

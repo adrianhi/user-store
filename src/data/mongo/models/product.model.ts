@@ -1,11 +1,11 @@
 import mongoose, { Schema } from 'mongoose';
 
 
-const productSchema = new mongoose.Schema( {
+const productSchema = new mongoose.Schema({
 
   name: {
     type: String,
-    required: [ true, 'Name is required' ],
+    required: [true, 'Name is required'],
     unique: true,
   },
   available: {
@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema( {
   description: {
     type: String,
   },
-  
+
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -31,10 +31,16 @@ const productSchema = new mongoose.Schema( {
     ref: 'Category',
     required: true
   }
-  
-
-} );
 
 
+});
+
+productSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret, options) {
+    delete ret._id;
+  }
+})
 export const ProductModel = mongoose.model('Product', productSchema);
 
